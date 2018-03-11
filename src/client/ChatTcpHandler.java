@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class ChatTcpHandler extends Thread{
     private final Scanner tcpConnectionReader;
 
+
     ChatTcpHandler(Socket socket) throws IOException{
         this.tcpConnectionReader = new Scanner(socket.getInputStream());
     }

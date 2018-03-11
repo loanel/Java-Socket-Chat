@@ -14,6 +14,7 @@ public class ChatMulticastHandler extends Thread{
     private Integer multicastPort;
     private String multicastIp;
 
+
     ChatMulticastHandler(String nickname, Integer multicastPort, String multicastIp){
         this.nickname = nickname;
         this.multicastPort = multicastPort;

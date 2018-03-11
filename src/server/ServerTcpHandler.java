@@ -5,9 +5,9 @@ import java.net.ServerSocket;
 import java.util.logging.Logger;
 
 class ServerTcpHandler extends Thread{
-
     private static final Logger logger = Logger.getLogger("Tcp Handler Logger");
     private final ChatServer chatServer;
+
 
     ServerTcpHandler(ChatServer chatServer){
         this.chatServer = chatServer;

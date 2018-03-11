@@ -10,6 +10,7 @@ class ChatUdpHandler extends Thread{
     private static Logger logger = Logger.getLogger("Chat Udp handler logger");
     private DatagramSocket datagramSocket;
 
+
     ChatUdpHandler(DatagramSocket datagramSocket) throws IOException {
         this.datagramSocket = datagramSocket;
     }

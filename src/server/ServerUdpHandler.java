@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 class ServerUdpHandler extends Thread{
-
-    ChatServer chatServer;
+    private ChatServer chatServer;
     private static final Logger logger = Logger.getLogger("Tcp Handler Logger");
+
 
     ServerUdpHandler(ChatServer chatServer){
         this.chatServer = chatServer;
@@ -29,25 +29,28 @@ class ServerUdpHandler extends Thread{
                 String message = new String(receivePacket.getData());
                 String[] splitNickname = message.split(":", 2);
                 String sender = splitNickname[0];
-                System.out.println("Recieved UDP message from " + message);
+                System.out.println("Received UDP message from " + message);
 
-                chatServer.getConnectedClients().entrySet().stream()
-                        .filter(connection -> !connection.getKey().equals(sender))
-                        .forEach(connection -> {
-                            try{
-                                Integer port = connection.getValue().getSocket().getPort();
-                                InetAddress address = InetAddress.getByName("localhost");
-                                byte[] sendBuffer = message.getBytes();
-                                DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
-                                datagramSocket.send(sendPacket);
-                            } catch(Exception exception){
-                                logger.warning(exception.getMessage());
-                            }
-                        });
+                sendUdpMessages(datagramSocket, sender, message);
             }
         } catch (IOException exception){
             logger.warning(exception.getMessage());
         }
     }
 
+    private void sendUdpMessages(DatagramSocket datagramSocket, String sender, String message){
+        chatServer.getConnectedClients().entrySet().stream()
+                .filter(connection -> !connection.getKey().equals(sender))
+                .forEach(connection -> {
+                    try{
+                        Integer port = connection.getValue().getSocket().getPort();
+                        InetAddress address = InetAddress.getByName("localhost");
+                        byte[] sendBuffer = message.getBytes();
+                        DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
+                        datagramSocket.send(sendPacket);
+                    } catch(Exception exception){
+                        logger.warning(exception.getMessage());
+                    }
+                });
+    }
 }

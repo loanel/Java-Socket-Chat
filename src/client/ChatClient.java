@@ -8,18 +8,20 @@ import java.util.logging.Logger;
 
 class ChatClient {
     private static final Logger logger = Logger.getLogger("Client Logger");
-
     private String nickname;
 
     private final PrintWriter writer;
     private final Scanner reader;
+
     private final Integer port;
     private final Integer multicastPort;
     private final String hostname;
     private final String multicastIp;
+
     private final Socket tcpSocket;
     private final DatagramSocket datagramSocket;
     private final MulticastSocket multicastSocket;
+
 
     ChatClient(Integer port, Integer multicastPort, String hostname, String multicastIp) throws IOException{
         this.reader = new Scanner(System.in);
@@ -30,7 +32,7 @@ class ChatClient {
         this.datagramSocket = new DatagramSocket(tcpSocket.getLocalPort());
         this.writer = new PrintWriter(tcpSocket.getOutputStream(), true);
 
-        this.nickname = scanNickname();
+        this.nickname = getUserNickname();
         System.out.println("Your nickname is : " + this.nickname);
         writer.write(nickname + "\n");
         writer.flush();
@@ -41,17 +43,6 @@ class ChatClient {
         multicastSocket.joinGroup(InetAddress.getByName(multicastIp));
     }
 
-    String getNickname() {
-        return nickname;
-    }
-
-    Socket getTcpSocket() {
-        return tcpSocket;
-    }
-
-    DatagramSocket getUdpSocket() {
-        return datagramSocket;
-    }
     void initializeChatConnection(ChatTcpHandler chatTcpHandler, ChatUdpHandler chatUdpHandler, ChatMulticastHandler chatMulticastHandler) throws IOException{
         chatTcpHandler.start();
         chatUdpHandler.start();
@@ -60,17 +51,12 @@ class ChatClient {
         tcpSocket.close();
     }
 
-    private String scanNickname(){
-        System.out.println("Enter your nickname: ");
-        return reader.nextLine();
-    }
-
     private void startChatRoutine() throws IOException{
         while(reader.hasNextLine()){
             String message = reader.nextLine();
             switch(message){
                 case "U":{
-                    InetAddress address = InetAddress.getByName("localhost");
+                    InetAddress address = InetAddress.getByName(hostname);
                     byte[] sendBuffer = (nickname + ": ░░░░░░░░░\n" +
                             "░░░░░░░░░░░░░▒▒▒▒▒░░░░░░░░░░░░░\n" +
                             "░░░░░░░▓░░▒▒▒░░░▒░▒▓▓░░▓░░░░░░░\n" +
@@ -92,12 +78,27 @@ class ChatClient {
                             "░░░░░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░\n").getBytes();
                     DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
                     datagramSocket.send(sendPacket);
-                    System.out.println(new String(sendBuffer));
+//                    System.out.println(new String(sendBuffer));
                     break;
                 }
                 case "M":{
                     InetAddress address = InetAddress.getByName(multicastIp);
-                    byte[] sendBuffer = (nickname + ": multicastblaster").getBytes();
+                    byte[] sendBuffer = (nickname + ": ░░░░░░░░░\n" +
+                            "         ▄▄▄▀▀▀▄▄███▄\n" +
+                            "          ▄▀▀░░░░░░░▐░▀██▌\n" +
+                            "     ▄▀░░░░▄▄███░▌▀▀░▀█\n" +
+                            "  ▄█░░▄▀▀▒▒▒▒▒▄▐░░░░█▌\n" +
+                            "▐█▀▄▀▄▄▄▄▀▀▀▀▌░░░░░▐█▄\n" +
+                            "▌▄▄▀▀                  ▌░░░░▄███████▄\n" +
+                            "                           ▐░░░░▐███████████▄\n" +
+                            "                           ▐░░░░▐█████████████▄\n" +
+                            "                             ▀▄░░░▐██████████████▄\n" +
+                            "                                 ▀▄▄████████████████▄\n" +
+                            "                                                   █▀██████▀▀▀▀█▄\n" +
+                            "                                             ▄▄▀▄▀  ▀██▀▀▀▄▄▄▀█\n" +
+                            "                                      ▄▀▀▀▀▀         ██▌\n" +
+                            "                                                        ▄▀▄▀\n" +
+                            "                                                  ▄▄██▀").getBytes();
                     DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, multicastPort);
                     multicastSocket.send(sendPacket);
                     break;
@@ -109,5 +110,22 @@ class ChatClient {
                 }
             }
         }
+    }
+
+    String getNickname() {
+        return nickname;
+    }
+
+    Socket getTcpSocket() {
+        return tcpSocket;
+    }
+
+    DatagramSocket getUdpSocket() {
+        return datagramSocket;
+    }
+
+    private String getUserNickname(){
+        System.out.println("Enter your nickname: ");
+        return reader.nextLine();
     }
 }

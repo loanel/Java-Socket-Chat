@@ -1,6 +1,7 @@
 package server;
 
-public class ChatRunner {
+public class ServerRunner {
+
     public static void main(String[] args) {
         System.out.println("Starting chat server!");
         ChatServer chatServer = new ChatServer();

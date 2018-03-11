@@ -8,9 +8,10 @@ import java.util.concurrent.Executors;
 
 class ChatServer {
 
-    private final int port = 12345;
+    private final static int port = 12345;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(50);
     private static final Map<String, ClientConnection> connectedClients = new HashMap<>();
+
 
     void initializeHandlers(Thread ServerTcpHandler, Thread ServerUdpHandler){
         ServerTcpHandler.start();
